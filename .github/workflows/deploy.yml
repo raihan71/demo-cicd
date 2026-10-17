@@ -1,0 +1,24 @@
+name: deploy-ubuntu
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo codebase 🚀
+        uses: actions/checkout@v4
+      - name: Install dependencies codebase 💹
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Deploy to AWS 💹 + 🚀
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_SECRET_KEY }}
+          script: |
+            echo "Pos sekeloa..."
+            cd /var/www/project/demo-cicd || git pull origin main || exit
+            free && sync && echo 3 > /proc/sys/vm/drop_caches && free
